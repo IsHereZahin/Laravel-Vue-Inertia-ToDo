@@ -21,6 +21,10 @@
                     </Link>
                 </div>
 
+                <div v-if="$page.props.flash.message" class="alert">
+                    {{ $page.props.flash.message }}
+                </div>
+
                 <!-- Card for the Form -->
                 <div class="bg-white rounded-lg shadow-lg border border-black p-6">
                     <h3 class="text-xl font-semibold text-black mb-8">Task Information</h3>

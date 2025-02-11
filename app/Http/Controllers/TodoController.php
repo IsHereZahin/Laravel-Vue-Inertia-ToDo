@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +14,10 @@ class TodoController extends Controller
      */
     public function index()
     {
-        return Inertia::render('ToDo/index');
+        $todos = auth()->user()->todos; // logged user's todo
+        return Inertia::render('ToDo/index', [
+            'todos' => $todos,
+        ]);
     }
 
     /**
@@ -37,12 +41,16 @@ class TodoController extends Controller
         $user = auth()->user();
 
         if (!$user) {
-            return redirect()->route('todo.index')->with('error', 'Unauthorized access.');
+            return redirect()->route('todo.index')
+                ->with('message', 'Unauthorized access.')
+                ->with('type', 'error');
         }
 
         $user->todos()->create($validatedData);
 
-        return redirect()->route('todo.index')->with('success', 'Task created successfully.');
+        return redirect()->route('todo.index')
+        ->with('message', 'Task created successfully.')
+        ->with('type', 'success');
     }
 
     /**
