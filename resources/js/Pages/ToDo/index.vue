@@ -13,7 +13,8 @@
                 <!-- Flash message with auto-hide -->
                 <div v-if="flashVisible" class="alert p-4 rounded-lg" :class="{
                     'bg-green-100 text-green-500 border border-green-300': $page.props.flash.type === 'success',
-                    'bg-red-100 text-red-500 border border-red-300': $page.props.flash.type === 'error'
+                    'bg-red-100 text-red-500 border border-red-300': $page.props.flash.type === 'error',
+                    'bg-blue-100 text-blue-500 border border-blue-300': $page.props.flash.type === 'info'
                 }">
                     <div class="flex items-center">
                         <!-- Success Icon -->
@@ -88,12 +89,13 @@
                                 >
                                     Edit
                                 </Link>
-                                <Link
-                                    :href="route('todo.destroy', item.id)"
+                                <button
+                                    type="submit"
+                                    @click="deleteTask(item.id)"
                                     class="ml-4 text-red-600 hover:text-black"
                                 >
                                     Delete
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -106,7 +108,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'; // Import Vue features
-import { usePage } from '@inertiajs/vue3'; // Access Inertia page data
+import { usePage, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"; // Layout for the page
 import { Head, Link } from '@inertiajs/vue3'; // Head for metadata, Link for navigation
 
@@ -123,11 +125,22 @@ const flashVisible = ref(false);
 
 // Show message if it exists, hide after 3 seconds
 onMounted(() => {
+    console.log(props.flash); // Debugging flash message
+
     if (props.flash && props.flash.message) {
         flashVisible.value = true; // Show message
         setTimeout(() => {
             flashVisible.value = false; // Hide message
-        }, 3000); // 3 seconds
+        }, 3000); // After 3 seconds
     }
 });
+
+// Function to delete a task
+const form = useForm({}); // Initialize the form with inertia's useForm hook
+
+const deleteTask = (id) => {
+    if (confirm("Are you sure you want to delete this task?")) {
+        form.delete(route('todo.destroy', id));
+    }
+}
 </script>

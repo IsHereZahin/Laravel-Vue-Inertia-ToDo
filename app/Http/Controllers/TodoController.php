@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Todo;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -132,14 +131,27 @@ class TodoController extends Controller
 
         return redirect()->route('todo.index')
         ->with('message', 'Task updated successfully.')
-        ->with('type', 'success');
+        ->with('type', 'info');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Todo $todo)
     {
-        //
+        $user = auth()->user();
+
+        if (!$user || $todo->user_id !== $user->id) {
+            return redirect()->route('todo.index')
+                ->with('message', 'Unauthorized access to this task.')
+                ->with('type', 'error');
+        }
+
+        // Perform deletion
+        $todo->delete();
+
+        return redirect()->route('todo.index')
+        ->with('message', 'Task deleted successfully.')
+        ->with('type', 'info');
     }
 }

@@ -78,10 +78,11 @@
                             <!-- Submit Button -->
                             <div class="mt-6">
                                 <button
+                                    :disabled="form.processing"
                                     type="submit"
                                     class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                 >
-                                    Create Task
+                                    {{ form.processing? "Creating..." : "Create Task" }}
                                 </button>
                             </div>
                         </div>
