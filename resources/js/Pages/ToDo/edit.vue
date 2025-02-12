@@ -25,16 +25,23 @@
                 </div>
 
                 <!-- Card for the Form -->
-                <div class="bg-white rounded-lg shadow-lg border border-black p-6">
-                    <h3 class="text-xl font-semibold text-black mb-8">Task Information</h3>
+                <div
+                    class="bg-white rounded-lg shadow-lg border border-black p-6"
+                >
+                    <h3 class="text-xl font-semibold text-black mb-8">
+                        Task Information
+                    </h3>
 
                     <!-- Task Edit Form -->
                     <form @submit.prevent="submitForm" class="mt-5">
                         <div class="space-y-6">
-
                             <!-- Task Title -->
                             <div>
-                                <label for="title" class="block text-sm font-medium text-black">Title</label>
+                                <label
+                                    for="title"
+                                    class="block text-sm font-medium text-black"
+                                    >Title</label
+                                >
                                 <input
                                     type="text"
                                     id="title"
@@ -44,12 +51,21 @@
                                     placeholder="Enter task title"
                                     required
                                 />
-                                <p v-if="errors.title" class="text-red-500 text-sm mt-1">{{ errors.title }}</p>
+                                <p
+                                    v-if="errors.title"
+                                    class="text-red-500 text-sm mt-1"
+                                >
+                                    {{ errors.title }}
+                                </p>
                             </div>
 
                             <!-- Due Date -->
                             <div>
-                                <label for="due_date" class="block text-sm font-medium text-black">Due Date</label>
+                                <label
+                                    for="due_date"
+                                    class="block text-sm font-medium text-black"
+                                    >Due Date</label
+                                >
                                 <input
                                     type="date"
                                     id="due_date"
@@ -57,12 +73,21 @@
                                     v-model="form.due_date"
                                     class="mt-1 px-4 py-3 border border-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm w-full"
                                 />
-                                <p v-if="errors.due_date" class="text-red-500 text-sm mt-1">{{ errors.due_date }}</p>
+                                <p
+                                    v-if="errors.due_date"
+                                    class="text-red-500 text-sm mt-1"
+                                >
+                                    {{ errors.due_date }}
+                                </p>
                             </div>
 
                             <!-- Task Description -->
                             <div>
-                                <label for="description" class="block text-sm font-medium text-black">Description</label>
+                                <label
+                                    for="description"
+                                    class="block text-sm font-medium text-black"
+                                    >Description</label
+                                >
                                 <textarea
                                     id="description"
                                     name="description"
@@ -71,7 +96,12 @@
                                     class="mt-1 px-4 py-3 border border-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm w-full"
                                     placeholder="Enter task description"
                                 ></textarea>
-                                <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
+                                <p
+                                    v-if="errors.description"
+                                    class="text-red-500 text-sm mt-1"
+                                >
+                                    {{ errors.description }}
+                                </p>
                             </div>
 
                             <!-- Submit Button -->
@@ -79,15 +109,18 @@
                                 <button
                                     type="submit"
                                     :disabled="form.processing"
-                                    class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                                    class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                 >
-                                {{ form.processing? "Updating..." : "Update Task" }}
-                            </button>
+                                    {{
+                                        form.processing
+                                            ? "Updating..."
+                                            : "Update Task"
+                                    }}
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </AuthenticatedLayout>
@@ -100,14 +133,14 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 // Props for validation errors and task data
 const props = defineProps({
     errors: Object,
-    task: Object,  // The task object passed from the server
+    task: Object, // The task object passed from the server
 });
 
 // Initialize form data with the current task values
 const form = useForm({
     title: props.task.title,
     description: props.task.description,
-    due_date: props.task.due_date || '',
+    due_date: props.task.due_date || "",
 });
 
 // Check task data in console
@@ -115,7 +148,7 @@ console.log(props.task);
 
 // Submit form for editing the task
 const submitForm = () => {
-    const response = form.put(route('todo.update', props.task.id));
+    const response = form.put(route("todo.update", props.task.id));
     if (response) {
         form.reset();
     }

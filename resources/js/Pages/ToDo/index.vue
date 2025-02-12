@@ -35,7 +35,7 @@
                 <div class="flex items-center justify-between py-5">
                     <Link
                         :href="route('todo.create')"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
                         Add Task
                     </Link>
@@ -78,7 +78,7 @@
                                     <button
                                         v-if="!item.completed"
                                         @click="toggleCompletion(item, true)"
-                                        class="h-8 px-4 text-white bg-gray-700 rounded hover:bg-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                                        class="h-8 px-4 text-white bg-gray-800 rounded hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                     >
                                         Mark as Complete
                                     </button>
