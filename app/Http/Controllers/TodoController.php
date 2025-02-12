@@ -36,16 +36,23 @@ class TodoController extends Controller
         $validatedData = $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
+            'due_date'    => 'nullable|date|after_or_equal:today',
         ]);
+
+        // If user didn't provide due_date, set it to today
+        if (empty($validatedData['due_date'])) {
+            $validatedData['due_date'] = now();
+        }
 
         $user = auth()->user();
 
         if (!$user) {
             return redirect()->route('todo.index')
-                ->with('message', 'Unauthorized access.')
-                ->with('type', 'error');
+            ->with('message', 'Unauthorized access.')
+            ->with('type', 'error');
         }
 
+        // Create the task with the validated data
         $user->todos()->create($validatedData);
 
         return redirect()->route('todo.index')
@@ -66,7 +73,23 @@ class TodoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // task by its ID
+        $task = Todo::findOrFail($id);
+
+        // authenticated user
+        $user = auth()->user();
+
+        // Check authenticated user
+        if (!$user || $task->user_id !== $user->id) {
+            return redirect()->route('todo.index')
+            ->with('message', 'Unauthorized access to this task.')
+            ->with('type', 'error');
+        }
+
+        // Pass the task data to the Inertia view as a prop
+        return Inertia::render('ToDo/edit', [
+            'task' => $task,
+        ]);
     }
 
     /**
@@ -74,7 +97,42 @@ class TodoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validations
+        $validatedData = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date'    => 'nullable|date|after_or_equal:today',
+        ]);
+
+        // If user didn't provide due_date, set it to today
+        if (empty($validatedData['due_date'])) {
+            $validatedData['due_date'] = now();
+        }
+
+        $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('todo.index')
+            ->with('message', 'Unauthorized access.')
+            ->with('type', 'error');
+        }
+
+        // Find the task by its ID
+        $task = Todo::findOrFail($id);
+
+        // Check if the logged-in user is the owner of the task
+        if ($task->user_id !== $user->id) {
+            return redirect()->route('todo.index')
+            ->with('message', 'Unauthorized access to this task.')
+            ->with('type', 'error');
+        }
+
+        // Update the task with the validated data
+        $task->update($validatedData);
+
+        return redirect()->route('todo.index')
+        ->with('message', 'Task updated successfully.')
+        ->with('type', 'success');
     }
 
     /**

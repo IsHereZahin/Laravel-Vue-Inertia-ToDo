@@ -1,16 +1,15 @@
 <template>
-    <Head title="Create Task" />
+    <Head title="Edit Task" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-black">
-                Create a New Task
+                Edit Task
             </h2>
         </template>
 
         <div class="py-12 pt-10 pb-10 px-5">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-
                 <!-- Back Button -->
                 <div class="mb-6">
                     <Link
@@ -29,7 +28,7 @@
                 <div class="bg-white rounded-lg shadow-lg border border-black p-6">
                     <h3 class="text-xl font-semibold text-black mb-8">Task Information</h3>
 
-                    <!-- Task Creation Form -->
+                    <!-- Task Edit Form -->
                     <form @submit.prevent="submitForm" class="mt-5">
                         <div class="space-y-6">
 
@@ -79,9 +78,11 @@
                             <div class="mt-6">
                                 <button
                                     type="submit"
+                                    :disabled="form.processing"
                                     class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                 >
-                                    Create Task
+                                    <span v-if="form.processing">Updating...</span>
+                                    <span v-else>Update</span>
                                 </button>
                             </div>
                         </div>
@@ -97,20 +98,25 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
-// Define props for validation errors
-defineProps({
-    errors: Object
+// Props for validation errors and task data
+const props = defineProps({
+    errors: Object,
+    task: Object,  // The task object passed from the server
 });
 
+// Initialize form data with the current task values
 const form = useForm({
-    title: "",
-    description: "",
-    due_date: "",
+    title: props.task.title,
+    description: props.task.description,
+    due_date: props.task.due_date || '',
 });
 
-// Submit form
+// Check task data in console
+console.log(props.task);
+
+// Submit form for editing the task
 const submitForm = () => {
-    const response = form.post(route('todo.store'));
+    const response = form.put(route('todo.update', props.task.id));
     if (response) {
         form.reset();
     }

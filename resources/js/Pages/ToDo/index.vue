@@ -53,7 +53,7 @@
                                 Description
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                completed
+                                Status & Due Date
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
@@ -78,6 +78,8 @@
                                 {{
                                     item.completed === 0 ? 'Incomplete' : (item.completed === 1 ? 'Complete' : 'Unknown')
                                 }}
+                                <br>
+                                <span class="text-gray-400">Due: {{ item.due_date ? new Date(item.due_date).toLocaleDateString() : 'No due date' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <Link
