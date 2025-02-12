@@ -74,11 +74,25 @@
                                     {{ limitDescription(item.description) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{
-                                        item.completed === 0 ? 'Incomplete' : (item.completed === 1 ? 'Complete' : 'Unknown')
-                                    }}
-                                    <br>
-                                    <span class="text-gray-400">Due: <DateDisplay :date="item.due_date" /></span>
+                                    <!-- Conditional Button for Marking Complete/Incomplete -->
+                                    <button
+                                        v-if="!item.completed"
+                                        @click="toggleCompletion(item, true)"
+                                        class="h-8 px-4 text-white bg-gray-700 rounded hover:bg-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                                    >
+                                        Mark as Complete
+                                    </button>
+                                    <button
+                                        v-if="item.completed"
+                                        @click="toggleCompletion(item, false)"
+                                        class="h-8 px-4 text-black bg-gray-200 border border-black rounded hover:bg-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                                    >
+                                        Mark as Incomplete
+                                    </button>
+                                    <br />
+                                    <span class="text-gray-600">Due:
+                                        <DateDisplay :date="item.due_date" :completed="item.completed" />
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <Link
@@ -141,7 +155,7 @@ onMounted(() => {
     }
 });
 
-// Method to limit description to 5 words
+// limit description to 5 words
 const limitDescription = (description) => {
     if (!description) return 'No description available';
 
@@ -160,5 +174,21 @@ const deleteTask = (id) => {
     if (confirm("Are you sure you want to delete this task?")) {
         form.delete(route('todo.destroy', id));
     }
-}
+};
+
+// Function to toggle completion status
+const toggleCompletion = (item, markComplete) => {
+    const routePath = markComplete
+        ? route('todo.complete', item.id)
+        : route('todo.uncomplete', item.id);
+
+    axios.patch(routePath)
+        .then(() => {
+            // Update the item's completed status locally
+            item.completed = markComplete;
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+};
 </script>

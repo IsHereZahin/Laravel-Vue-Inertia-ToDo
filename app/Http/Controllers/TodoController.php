@@ -150,6 +150,28 @@ class TodoController extends Controller
         ->with('type', 'info');
     }
 
+    public function complete(Todo $todo)
+    {
+        $todo->completed = true;
+        $todo->save();
+
+        return response()->json([
+            'message' => 'Todo marked as complete.',
+            'todo' => $todo
+        ]);
+    }
+
+    public function uncomplete(Todo $todo)
+    {
+        $todo->completed = false;
+        $todo->save();
+
+        return response()->json([
+            'message' => 'Todo marked as incomplete.',
+            'todo' => $todo
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
