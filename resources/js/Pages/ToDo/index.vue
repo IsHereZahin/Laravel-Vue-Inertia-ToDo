@@ -41,65 +41,70 @@
                     </Link>
                 </div>
 
-                <table class="min-w-full divide-y divide-gray-200 mt-5">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                #
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                Title
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                Description
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                Status & Due Date
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr
-                            v-for="item in todos"
-                            :key="item.id"
-                        >
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ item.id }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ item.title }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ item.description ? item.description : 'No description available' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{
-                                    item.completed === 0 ? 'Incomplete' : (item.completed === 1 ? 'Complete' : 'Unknown')
-                                }}
-                                <br>
-                                <span class="text-gray-400">Due: {{ item.due_date ? new Date(item.due_date).toLocaleDateString() : 'No due date' }}</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <Link
-                                    :href="route('todo.edit', item.id)"
-                                    class="text-gray-600 hover:text-black"
-                                >
-                                    Edit
-                                </Link>
-                                <button
-                                    type="submit"
-                                    @click="deleteTask(item.id)"
-                                    class="ml-4 text-red-600 hover:text-black"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto mt-5">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    #
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Title
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Description
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Status & Due Date
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr v-for="item in todos" :key="item.id">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ item.id }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ item.title }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ limitDescription(item.description) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{
+                                        item.completed === 0 ? 'Incomplete' : (item.completed === 1 ? 'Complete' : 'Unknown')
+                                    }}
+                                    <br>
+                                    <span class="text-gray-400">Due: <DateDisplay :date="item.due_date" /></span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <Link
+                                        :href="route('todo.show', item.id)"
+                                        class="text-gray-600 hover:text-black"
+                                    >
+                                        Show
+                                    </Link>
+                                    <Link
+                                        :href="route('todo.edit', item.id)"
+                                        class="ml-4 text-gray-600 hover:text-black"
+                                    >
+                                        Edit
+                                    </Link>
+                                    <button
+                                        type="submit"
+                                        @click="deleteTask(item.id)"
+                                        class="ml-4 text-red-600 hover:text-black"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
             </div>
         </div>
@@ -109,6 +114,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'; // Import Vue features
 import { usePage, useForm } from '@inertiajs/vue3';
+import DateDisplay from "@/components/DateDisplay.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"; // Layout for the page
 import { Head, Link } from '@inertiajs/vue3'; // Head for metadata, Link for navigation
 
@@ -134,6 +140,18 @@ onMounted(() => {
         }, 3000); // After 3 seconds
     }
 });
+
+// Method to limit description to 5 words
+const limitDescription = (description) => {
+    if (!description) return 'No description available';
+
+    let words = description.split(' ');
+    if (words.length > 5) {
+        words = words.slice(0, 5); // Take only the first 5 words
+        return words.join(' ') + '...'; // Add ellipsis
+    }
+    return description;
+};
 
 // Function to delete a task
 const form = useForm({}); // Initialize the form with inertia's useForm hook

@@ -64,7 +64,23 @@ class TodoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // task by its ID
+        $task = Todo::findOrFail($id);
+
+        // authenticated user
+        $user = auth()->user();
+
+        // Check authenticated user
+        if (!$user || $task->user_id!== $user->id) {
+            return redirect()->route('todo.index')
+            ->with('message', 'Unauthorized access to this task.')
+            ->with('type', 'error');
+        }
+
+        // Pass the task data to the Inertia view as a prop
+        return Inertia::render('ToDo/show', [
+            'task' => $task,
+        ]);
     }
 
     /**
@@ -150,8 +166,8 @@ class TodoController extends Controller
         // Perform deletion
         $todo->delete();
 
-        return redirect()->route('todo.index')
+        return redirect()->back()
         ->with('message', 'Task deleted successfully.')
-        ->with('type', 'info');
+        ->with('type', 'success');
     }
 }
